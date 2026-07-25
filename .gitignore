@@ -1,0 +1,13 @@
+.venv/
+venv/
+venv_dml/
+__pycache__/
+*.pyc
+backend/.env
+backend/__pycache__/
+ml_engine/__pycache__/
+ml_engine/datasets/
+ml_engine/datasets.zip
+ml_engine/models/
+ml_engine/eda_outputs/
+ml_engine/training_log.txt

@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-multipart
+tensorflow
+torch
+torchvision
+ultralytics
+opencv-python
+scikit-learn
+xgboost
+pandas
+numpy
+pillow
+albumentations
+psycopg2-binary
+pymongo
