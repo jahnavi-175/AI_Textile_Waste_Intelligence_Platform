@@ -1,0 +1,14 @@
+# repo root .dockerignore
+.venv
+venv
+venv_dml
+__pycache__
+*.pyc
+.git
+.env
+ml_engine/datasets
+ml_engine/eda_outputs
+ml_engine/models
+ml_engine/training_log.txt
+frontend/node_modules
+frontend/.next
