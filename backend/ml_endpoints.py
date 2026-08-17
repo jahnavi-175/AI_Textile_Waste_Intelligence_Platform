@@ -344,7 +344,7 @@ async def analyze_batch(
             await trigger_inventory_created_event(
                 item_name=clean_label,
                 weight_kg=resolved_quantity_kg,
-                material_type=dominant_fabric,
+                material_type=dominant_material,
                 user_email=current_user.get("email"),
                 source="AI Scan Intake",
             )
@@ -442,8 +442,8 @@ async def analyze_batch(
 @router.post("/analyze/detailed")
 async def analyze_detailed(file: UploadFile = File(...), current_user=Depends(get_current_user)):
     image_bytes = await file.read()
-    analysis = analyze_image(image_bytes)
-    defect_analysis = analyze_defects(image_bytes)
+    analysis = await analyze_image(image_bytes)
+    defect_analysis = await analyze_defects(image_bytes)
     recyclability = assess_recyclability(analysis, defect_analysis)
     impact = calculate_item_impact({"analysis": analysis, "recyclability": recyclability})
     impact_weight = impact.get("weight_kg", 0.0)

@@ -4,7 +4,8 @@ services:
     volumes:
       - ./ml_engine/models:/app/models
     ports:
-      - "8001:8001"
+      - "127.0.0.1:8001:8001"
+    restart: unless-stopped
 
   backend:
     build: ./backend
@@ -12,16 +13,19 @@ services:
       - ML_ENGINE_URL=http://ml_engine:8001
     env_file: ./backend/.env
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       - ml_engine
+    restart: unless-stopped
 
   frontend:
-    build: ./frontend/sortex
+    build:
+      context: ./frontend/sortex
+      args:
+        NEXT_PUBLIC_API_URL: http://3.108.55.195
+        NEXT_PUBLIC_API_BASE_URL: http://3.108.55.195
     ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - "127.0.0.1:3000:3000"
     depends_on:
       - backend
     restart: unless-stopped
