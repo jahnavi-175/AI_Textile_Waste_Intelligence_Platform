@@ -77,8 +77,8 @@ async def get_system_health(current_user: dict = Depends(get_current_user)):
 
     ml_models = {}
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            resp = await client.get(f"{ML_ENGINE_URL}/health")
+        async with httpx.AsyncClient(timeout=5.0) as http_client:
+            resp = await http_client.get(f"{ML_ENGINE_URL}/health")
             resp.raise_for_status()
             ml_models = resp.json().get("loaded_models", {})
     except Exception as exc:

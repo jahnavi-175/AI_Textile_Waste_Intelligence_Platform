@@ -448,6 +448,24 @@ async def analyze_detailed(file: UploadFile = File(...), current_user=Depends(ge
     impact = calculate_item_impact({"analysis": analysis, "recyclability": recyclability})
     impact_weight = impact.get("weight_kg", 0.0)
 
+    scan_id = None
+    try:
+        insert_result = await ai_logs_collection.insert_one(
+            {
+                "user_email": current_user["email"],
+                "filename": file.filename,
+                "content_type": file.content_type,
+                "analysis": analysis,
+                "defect_analysis": defect_analysis,
+                "recyclability": recyclability,
+                "impact": impact,
+                "created_at": time.time(),
+            }
+        )
+        scan_id = str(insert_result.inserted_id)
+    except Exception as exc:
+        print(f"[ml_endpoints] warning: failed to log detailed scan to ai_logs_collection: {exc}")
+
     detailed_report_bytes = None
     detailed_report_filename = None
     try:
@@ -459,7 +477,7 @@ async def analyze_detailed(file: UploadFile = File(...), current_user=Depends(ge
         }
         report_buffer = generate_single_scan_pdf_report(scan_doc, current_user["email"])
         detailed_report_bytes = report_buffer.getvalue()
-        detailed_report_filename = f"scan_report_{int(time.time())}.pdf"
+        detailed_report_filename = f"scan_report_{scan_id or int(time.time())}.pdf"
     except Exception as exc:
         print(f"[ml_endpoints] warning: failed to generate PDF report for email attachment: {exc}")
 
@@ -470,6 +488,7 @@ async def analyze_detailed(file: UploadFile = File(...), current_user=Depends(ge
             scan_count=1,
             user_email=current_user["email"],
             is_batch=False,
+            batch_id=scan_id,
             report_bytes=detailed_report_bytes,
             report_filename=detailed_report_filename,
         )
@@ -477,6 +496,7 @@ async def analyze_detailed(file: UploadFile = File(...), current_user=Depends(ge
         print(f"[ml_endpoints] warning: failed to trigger detailed completion event notification: {exc}")
 
     return {
+        "scan_id": scan_id,
         "analysis": analysis,
         "defect_analysis": defect_analysis,
         "recyclability": recyclability,

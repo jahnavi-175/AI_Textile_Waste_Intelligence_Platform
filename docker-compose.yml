@@ -22,8 +22,8 @@ services:
     build:
       context: ./frontend/sortex
       args:
-        NEXT_PUBLIC_API_URL: http://3.108.55.195
-        NEXT_PUBLIC_API_BASE_URL: http://3.108.55.195
+        NEXT_PUBLIC_API_URL: http://13.235.118.152
+        NEXT_PUBLIC_API_BASE_URL: http://13.235.118.152
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
